@@ -1,0 +1,61 @@
+.confirmation_of_deletion_element{
+  width:240px;
+  position: relative;
+  background-color: white;
+  box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.15);
+  margin:24px auto;
+  position: fixed;
+  right: 185px;
+  top: 165px;
+}
+.image_arrow{
+  position: absolute;
+  left: -6px;
+  top:12px;
+  width:6px;
+  height: 12px;
+ 
+  
+}
+ 
+.text_buttons{  
+  
+    padding: 16px;
+    height: 104px;
+    box-sizing: border-box; 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+ 
+}
+.text_element{
+  display: flex;
+  align-items: start;
+}
+.image_allert{
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+  margin-top: 3px;
+}
+.text{
+  color:rgb(89, 89, 89);
+  font-size: 14px;
+}
+
+.buttons{
+   margin-left: auto;
+}
+.button{
+  color:rgb(89, 89, 89);
+  margin-left:8px;
+  border: 1px solid rgb(217, 217, 217);
+border-radius: 4px; 
+font-size: 14px;
+}
+.button:focus, .button:active, .button:hover{
+  border-color: rgb(24, 144, 255);
+  background-color: rgb(24, 144, 255);
+  color:white;  
+}
+ 

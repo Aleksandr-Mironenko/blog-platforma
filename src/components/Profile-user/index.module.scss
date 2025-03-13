@@ -1,0 +1,52 @@
+ 
+ .edit_profile_body{
+  width: 384px;
+  height:498px ;
+  margin:24px auto;
+  background-color: white;
+  box-shadow: 0px 0.61px 2.93px 0px rgba(0, 0, 0, 0.02),0px 1.46px 7.05px 0px rgba(0, 0, 0, 0.03),0px 2.75px 13.27px 0px rgba(0, 0, 0, 0.04),0px 4.91px 23.68px 0px rgba(0, 0, 0, 0.04),0px 9.19px 44.28px 0px rgba(0, 0, 0, 0.05),0px 22px 106px 0px rgba(0, 0, 0, 0.07);
+ }
+ .edit{
+  margin:48px 32px;
+  display: flex;
+  flex-direction: column;
+
+ }
+ .edit_profile{
+  align-self: center;
+  margin-bottom: 21px;
+  font-weight: 500;
+line-height: 28px;
+font-size: 20px;
+ }
+ .edit_label{margin:12px 0 2px;
+  color: rgb(38, 38, 38);
+  font-family: Roboto;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;}
+ 
+ .edit_input{
+  border: 1px solid rgb(217, 217, 217);
+border-radius: 4px;
+padding: 7px 12px;
+font-size: 16px;
+line-height: 24px;
+ }
+
+ .edit_input::placeholder {
+  color: rgb(191, 191, 191);
+
+ }
+ .edit_input:focus {
+  outline: none;
+  border-color: rgb(24, 144, 255);
+ }
+ .button_save{
+  height: 40px;
+  border: 1px solid rgb(24, 144, 255);
+  border-radius: 4px;
+  color: white;
+  background-color: rgb(24, 144, 255);
+  margin-top: 21px;
+ }

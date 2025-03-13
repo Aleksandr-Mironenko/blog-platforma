@@ -1,0 +1,111 @@
+import { withRouter } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
+
+import image from './image.png'
+import style from './index.module.scss'
+const BlogFullElementAuthorized = ({
+  tagList = [],
+  title,
+  favoritesCount,
+  authorUserName,
+  createdAt,
+  authorImage,
+  // authorFollowing,
+  // favorited,
+  postAbbreviated = '',
+  postFull = '',
+  updatedAt,
+  history,
+  id,
+}) => {
+  console.log(id)
+  const isMarkdown = (text) => {
+    const markdownPatterns = [
+      /^#/,
+      /\[([^\]]+)]\(([^)]+)\)/,
+      /\*\*([^*]+)\*\*/,
+      /__([^_]+)__/,
+      /\*([^*]+)\*/,
+      /_([^_]+)_/,
+      /^(\*|-|\+|\d+\.) /,
+      /!\[([^\]]+)]\(([^)]+)\)/,
+    ]
+
+    return markdownPatterns.some((pattern) => pattern.test(text))
+  }
+  const tags = tagList.map((item, index) => {
+    if (item === ' ') {
+      item = ''
+    }
+    return (
+      <div className={style.tag} key={index}>
+        {item}
+      </div>
+    )
+  })
+  return (
+    <div className={style.blog_full_element}>
+      <div className={style.info}>
+        <div className={style.left}>
+          <div className={style.title_sting}>
+            <div className={style.title}>{title}</div>
+
+            <div className={style.favorites}>
+              <img alt="heart" src={image} className={style.heart} />
+              <div className={style.favorites_count}>{favoritesCount}</div>
+            </div>
+          </div>
+
+          <div className={style.tags}>{tagList.length ? tags : null}</div>
+        </div>
+
+        <div className={style.right}>
+          <div className={style.author_info}>
+            <div className={style.author_user_name}>{authorUserName}</div>
+            <div className={style.time_created}>{createdAt}</div>
+          </div>
+          <div></div>
+          <img className={style.author_image} alt="User" src={authorImage} />
+        </div>
+      </div>
+      <div className={style.abbr_edit_delete}>
+        <div className={style.post_abbreviated}>
+          {tagList.length
+            ? postAbbreviated
+            : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'}
+        </div>
+        <div className={style.edit_delete}>
+          <button
+            className={style.delete}
+            onClick={() => {
+              history.push(`/articles/${id}/delete`)
+            }}
+          >
+            Delete
+          </button>
+          <button
+            className={style.edit}
+            onClick={() => {
+              history.push(`/articles/${id}/edit`)
+            }}
+          >
+            Edit
+          </button>
+        </div>
+      </div>
+
+      <div className={style.postFull}>
+        {postFull.length ? (
+          isMarkdown(postFull) ? (
+            <ReactMarkdown>{postFull}</ReactMarkdown>
+          ) : (
+            postFull
+          )
+        ) : (
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+        )}
+      </div>
+    </div>
+  )
+}
+export default withRouter(BlogFullElementAuthorized)

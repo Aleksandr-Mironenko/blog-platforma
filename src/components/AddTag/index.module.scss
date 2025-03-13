@@ -1,0 +1,49 @@
+.tag{
+  margin-top: 5px;
+  box-sizing: content-box;
+}
+.input_tag{
+  width: 300px;
+  height: 37px;
+  padding-left:  12px;
+  border-radius: 4px;
+    border: 1px solid rgb(217, 217, 217)
+}
+
+::placeholder{
+    color:rgb(191, 191, 191);
+    font-size: 16px;
+   }
+  
+   .input_tag:focus{
+    outline: none;
+    border-color: rgb(24, 144, 255);
+   }
+
+.button_del{
+  margin:0 18px;
+  // font-family: Roboto;
+font-size: 16px;
+border: 1px solid rgb(245, 34, 45);
+border-radius: 4px;
+width: 118px;
+height: 40px;
+background-color: white;
+color:rgb(245, 34, 45);
+}
+// .input{
+//   min-height: 40px;
+//   padding-left:  12px;
+//   padding-top: 7px;
+//   border-radius: 4px;
+//   border: 1px solid rgb(217, 217, 217)
+//  }
+//   ::placeholder{
+//   color:rgb(191, 191, 191);
+//   font-size: 16px;
+//  }
+
+//  .input:focus{
+//   outline: none;
+//   border-color: rgb(24, 144, 255);
+//  }
