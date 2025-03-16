@@ -1,9 +1,15 @@
 import { withRouter } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
+import { connect } from 'react-redux'
 
-import image from './image.png'
+import actions from '../actions'
+
+import white from './transparent.svg'
+import red from './red.svg'
 import style from './index.module.scss'
+
 const BlogFullElementAuthorized = ({
+  store,
   tagList = [],
   title,
   favoritesCount,
@@ -11,14 +17,16 @@ const BlogFullElementAuthorized = ({
   createdAt,
   authorImage,
   // authorFollowing,
-  // favorited,
+  favorited,
   postAbbreviated = '',
   postFull = '',
   updatedAt,
   history,
   id,
+  slug,
+  favorite,
+  noFavorite,
 }) => {
-  console.log(id)
   const isMarkdown = (text) => {
     const markdownPatterns = [
       /^#/,
@@ -43,6 +51,36 @@ const BlogFullElementAuthorized = ({
       </div>
     )
   })
+
+  const fullOrNot =
+    authorUserName === store.userName ? (
+      <div className={style.edit_delete}>
+        <button
+          className={style.delete}
+          onClick={() => {
+            history.push(`/articles/${id}/delete`)
+          }}
+        >
+          Delete
+        </button>
+        <button
+          className={style.edit}
+          onClick={() => {
+            history.push(`/articles/${id}/edit`)
+          }}
+        >
+          Edit
+        </button>
+      </div>
+    ) : null
+  const liked = () => {
+    if (!favorited) {
+      favorite(slug, store.token, id)
+    } else {
+      noFavorite(slug, store.token, id)
+    }
+  }
+
   return (
     <div className={style.blog_full_element}>
       <div className={style.info}>
@@ -51,8 +89,12 @@ const BlogFullElementAuthorized = ({
             <div className={style.title}>{title}</div>
 
             <div className={style.favorites}>
-              <img alt="heart" src={image} className={style.heart} />
-              <div className={style.favorites_count}>{favoritesCount}</div>
+              {favorited ? (
+                <img alt="heart" src={red} className={style.heart} onClick={liked} />
+              ) : (
+                <img alt="heart" src={white} className={style.heart} onClick={liked} />
+              )}
+              <div className={style.favorites_count}>{favorited ? favoritesCount + 1 : favoritesCount}</div>
             </div>
           </div>
 
@@ -69,43 +111,15 @@ const BlogFullElementAuthorized = ({
         </div>
       </div>
       <div className={style.abbr_edit_delete}>
-        <div className={style.post_abbreviated}>
-          {tagList.length
-            ? postAbbreviated
-            : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'}
-        </div>
-        <div className={style.edit_delete}>
-          <button
-            className={style.delete}
-            onClick={() => {
-              history.push(`/articles/${id}/delete`)
-            }}
-          >
-            Delete
-          </button>
-          <button
-            className={style.edit}
-            onClick={() => {
-              history.push(`/articles/${id}/edit`)
-            }}
-          >
-            Edit
-          </button>
-        </div>
+        <div className={style.post_abbreviated}>{postAbbreviated}</div>
+        {fullOrNot}
       </div>
 
       <div className={style.postFull}>
-        {postFull.length ? (
-          isMarkdown(postFull) ? (
-            <ReactMarkdown>{postFull}</ReactMarkdown>
-          ) : (
-            postFull
-          )
-        ) : (
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
-        )}
+        {isMarkdown(postFull) ? <ReactMarkdown>{postFull}</ReactMarkdown> : postFull}
       </div>
     </div>
   )
 }
-export default withRouter(BlogFullElementAuthorized)
+const mapStateToProps = (state) => ({ store: state })
+export default withRouter(connect(mapStateToProps, actions)(BlogFullElementAuthorized))

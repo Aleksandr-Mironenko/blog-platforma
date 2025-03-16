@@ -1,7 +1,6 @@
- .editBlogElement{
-  
+ .createEditBlogElement{
   width: 938px ;
-  margin:24px auto ;
+  margin:59px auto auto;
   background-color: white;
   box-sizing: border-box;
   padding:48px 32px;
@@ -44,12 +43,7 @@ color: rgb(38, 38, 38);
   outline: none;
   border-color: rgb(24, 144, 255);
  }
-//  .short_description_label{}
-//  .short_description_input{}
-//  .text_label{}
-//  .short_description_textarea{}
-//  .tags{}
-//  .tags_h{}
+ 
  .tags_elems_button{
   display: flex;
   align-items: flex-end;

@@ -1,7 +1,7 @@
 .blog_full_element{
-  min-height: 870px;
+  // min-height: 870px;
   width: 941px ;
-  margin:24px auto ;
+  margin:26px auto ;
   background-color: white;
   box-sizing: content-box;
   padding:15px;
@@ -96,7 +96,7 @@
 .post_abbreviated{
   color: rgba(0, 0, 0, 0.5);
   box-sizing: content-box;
-width:682px;
+  width:682px;
   font-size: 12px;
 }
 .edit_delete{
@@ -122,5 +122,9 @@ width:682px;
 
 .postFull {
   color: rgba(0, 0, 0, 0.75);;
+  
+}
+.postFull img{
+  max-width: 100%;
   
 }

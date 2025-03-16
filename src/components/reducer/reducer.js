@@ -2,6 +2,7 @@ const initialState = {
   authorized: false,
   error: false,
   loading: false,
+  offline: false,
   userName: '',
   userPhoto: '',
   emailAddress: '',
@@ -31,6 +32,11 @@ const reducer = (state = initialState, action) => {
     case 'CHANGE_PAGEQTY': {
       return { ...state, pageQty: action.pageQty }
     }
+    case 'OFFLINE':
+      return {
+        ...state,
+        offline: action.bool,
+      }
     case 'AVTORIZED': {
       return {
         ...state,
@@ -42,7 +48,6 @@ const reducer = (state = initialState, action) => {
       }
     }
     case 'LOGIN': {
-      console.log(action)
       return {
         ...state,
         authorized: true,
@@ -64,6 +69,23 @@ const reducer = (state = initialState, action) => {
         userName: '',
         bio: '',
         userPhoto: '',
+      }
+    }
+    case 'HAVE_TOKEN': {
+      return {
+        ...state,
+        token: action.token,
+        authorized: true,
+      }
+    }
+    case 'CHANGE_FAVORITE': {
+      return {
+        ...state,
+        posts: [
+          ...state.posts.slice(0, action.id),
+          { ...state.posts[action.id], favorited: action.bool },
+          ...state.posts.slice(action.id + 1),
+        ],
       }
     }
     default:

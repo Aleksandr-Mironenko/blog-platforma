@@ -12,7 +12,7 @@ const AddTag = ({ item, index, sostTags, delTags }) => {
         onChange={(e) => sostTags(index, e.target.value)}
         className={style.input_tag}
       />
-      <button className={style.button_del} onClick={() => delTags(index)}>
+      <button type="button" className={style.button_del} onClick={() => delTags(index)}>
         Delete
       </button>
     </div>

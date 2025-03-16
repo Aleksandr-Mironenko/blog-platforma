@@ -9,7 +9,7 @@ import style from './index.module.scss'
 
 const BodyBlog = ({ store, changePage }) => {
   const { posts } = store
-  console.log(posts)
+
   const elements = posts.map((item, index) => {
     return <BlogElement key={index} {...item} />
   })
@@ -17,8 +17,8 @@ const BodyBlog = ({ store, changePage }) => {
   return (
     <div className={style.body_blog}>
       {elements}
-      <Stack spacing={2} sx={{ margin: '26px auto' }}>
-        {!!store.pageQty && (
+      <Stack spacing={2} sx={{ margin: '26px auto 17px' }}>
+        {store.posts.length > 0 && (
           <Pagination
             count={store.pageQty}
             page={store.page}

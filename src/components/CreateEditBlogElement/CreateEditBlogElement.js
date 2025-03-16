@@ -1,21 +1,28 @@
 import { useState } from 'react'
 import { connect } from 'react-redux'
-import { format } from 'date-fns'
+import { withRouter, Redirect } from 'react-router-dom'
 
 import actions from '../actions'
 import AddTag from '../AddTag'
 
 import style from './index.module.scss'
 
-const CreateBlogElement = ({
+const CreateEditBlogElement = ({
   store,
-  addPost,
-  // history
+  history,
+  title,
+  tagList,
+  postAbbreviated,
+  slug,
+  postFull = '',
+  updateArticle,
+  createPost,
 }) => {
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [text, setText] = useState('')
-  const [tags, setTags] = useState([''])
+  const [titlee, setTitle] = useState(title ? title : '')
+  const [description, setDescription] = useState(postAbbreviated ? postAbbreviated : '')
+  const [text, setText] = useState(postFull ? postFull : '')
+  const [tags, setTags] = useState(tagList ? tagList : [''])
+
   const sostTags = (index, value) => {
     setTags([...tags.slice(0, index), value, ...tags.slice(index + 1)])
   }
@@ -27,40 +34,38 @@ const CreateBlogElement = ({
   const tagss = tags.map((item, index) => {
     return <AddTag key={index} item={item} index={index} sostTags={sostTags} delTags={delTags} />
   })
-  const sendPost = () => {
-    addPost({
-      title: title,
-      tagList: tags,
-      favoritesCount: 0,
-      authorUserName: store.userName,
-      createdAt: format(new Date(), 'MMMM d, yyyy'),
-      authorImage: store.userPhoto,
-      authorFollowing: false,
-      favorited: false,
-      postAbbreviated: description,
-      postFull: text,
-      updatedAt: format(new Date(), 'MMMM d, yyyy'),
-    })
-    // history.push('/')
-    console.log({
-      title: title,
-      tagList: tags,
-      favoritesCount: 0,
-      authorUserName: store.userName,
-      createdAt: format(new Date(), 'MMMM d, yyyy'),
-      authorImage: store.userPhoto,
-      authorFollowing: false,
-      favorited: false,
-      postAbbreviated: description,
-      postFull: text,
-      updatedAt: format(new Date(), 'MMMM d, yyyy'),
-    })
-  }
 
+  const tagsss = tags.filter((item) => item !== '' && item !== ' ')
+
+  const check = title || postAbbreviated || postFull || tagList
+
+  const send = (e) => {
+    e.preventDefault()
+    const post = {
+      title: titlee,
+
+      tagList: tagsss,
+
+      text: text,
+      slug: slug,
+      description: description,
+      token: store.token,
+    }
+    if (check) {
+      updateArticle(post)
+    } else {
+      createPost(post)
+    }
+
+    history.push('/articles')
+  }
+  if (!store.authorized) {
+    return <Redirect to="/articles" />
+  }
   return (
-    <div className={style.createBlogElement}>
-      <div className={style.blogElement}>
-        <div className={style.legend}>Create new article</div>
+    <div className={style.createEditBlogElement}>
+      <form onSubmit={send} className={style.blogElement}>
+        <div className={style.legend}>{check ? 'Edit article' : 'Create new article'}</div>
         <label htmlFor="title" className={style.label}>
           Title
         </label>
@@ -68,7 +73,7 @@ const CreateBlogElement = ({
           type="text"
           id="title"
           name="title"
-          value={title}
+          value={titlee}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Title"
           className={style.input}
@@ -104,22 +109,28 @@ const CreateBlogElement = ({
 
           <div className={style.tags_elems_button}>
             <div className={style.tags_el}>{tagss}</div>
-            <button onClick={() => setTags([...tags, ''])} className={style.button_add}>
+            <button
+              type="button"
+              onClick={() => {
+                setTags([...tags, ''])
+              }}
+              className={style.button_add}
+            >
               Add tag
             </button>
           </div>
         </div>
-        <button onClick={sendPost} className={style.button_send}>
+        <button type="submit" className={style.button_send}>
           Send
         </button>
-      </div>
+      </form>
     </div>
   )
 }
 
 const mapStateToProps = (state) => ({ store: state })
 
-export default connect(mapStateToProps, actions)(CreateBlogElement) //withRouter()
+export default withRouter(connect(mapStateToProps, actions)(CreateEditBlogElement))
 
 // возможнош разумно сделать разметку <fieldset>
 // <legend>User Details</legend>

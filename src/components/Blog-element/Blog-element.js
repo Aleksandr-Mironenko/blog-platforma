@@ -1,8 +1,15 @@
 import { withRouter } from 'react-router-dom'
+import { connect } from 'react-redux'
 
-import image from './image.png'
+import actions from '../actions'
+
+// import image from './image.png'
 import style from './index.module.scss'
+import white from './transparent.svg'
+import red from './red.svg'
+
 const BlogElement = ({
+  store,
   history,
   tagList,
   title,
@@ -11,13 +18,24 @@ const BlogElement = ({
   createdAt,
   authorImage,
   // authorFollowing,
-  // favorited,
+  favorited,
   postAbbreviated,
   postFull,
   // updatedAt,
+
   id,
+  slug,
+  favorite,
+  noFavorite,
 }) => {
-  console.log(id)
+  // const isLike = favorited ? red : white
+  const abr = (text) => {
+    if (text.length > 65) {
+      return text.slice(0, 65) + '...'
+    }
+    return text
+  }
+
   const tags = tagList.map((item, index) => {
     if (item === ' ') {
       item = ''
@@ -28,6 +46,15 @@ const BlogElement = ({
       </div>
     )
   })
+
+  const liked = () => {
+    if (!favorited) {
+      favorite(slug, store.token, id)
+    } else {
+      noFavorite(slug, store.token, id)
+    }
+  }
+
   return (
     <div className={style.blog_element}>
       <div className={style.info}>
@@ -39,12 +66,16 @@ const BlogElement = ({
                 history.push(`/articles/${id}`)
               }}
             >
-              {title}
+              {abr(`${title}`)}
             </div>
 
             <div className={style.favorites}>
-              <img alt="heart" src={image} className={style.heart} />
-              <div className={style.favorites_count}>{favoritesCount}</div>
+              {favorited ? (
+                <img alt="heart" src={red} className={style.heart} onClick={liked} />
+              ) : (
+                <img alt="heart" src={white} className={style.heart} onClick={liked} />
+              )}
+              <div className={style.favorites_count}>{favorited ? favoritesCount + 1 : favoritesCount}</div>
             </div>
           </div>
 
@@ -60,12 +91,9 @@ const BlogElement = ({
           <img className={style.author_image} alt="User" src={authorImage} />
         </div>
       </div>
-      <div className={style.post_abbreviated}>
-        {tagList.length
-          ? postAbbreviated
-          : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'}
-      </div>
+      <div className={style.post_abbreviated}>{postAbbreviated}</div>
     </div>
   )
 }
-export default withRouter(BlogElement)
+const mapStateToProps = (state) => ({ store: state })
+export default withRouter(connect(mapStateToProps, actions)(BlogElement))

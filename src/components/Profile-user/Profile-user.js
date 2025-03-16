@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { useState } from 'react'
-import { withRouter } from 'react-router-dom'
+import { withRouter, Redirect } from 'react-router-dom'
 
 import actions from '../actions'
 
@@ -17,11 +17,14 @@ const ProfileUser = ({ store, saveUserData, history }) => {
     saveUserData({
       userName,
       emailAddress,
-      password,
+      password: password || store.password,
       userPhoto,
       token: store.token,
     })
     history.push('/articles')
+  }
+  if (!store.authorized) {
+    return <Redirect to="/articles" />
   }
   return (
     <div className={style.edit_profile_body}>

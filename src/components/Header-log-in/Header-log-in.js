@@ -5,7 +5,9 @@ import actions from '../actions'
 
 import style from './index.module.scss'
 
-const HeaderLogIn = ({ store, history, logOut }) => {
+const HeaderLogIn = ({ store, history, logOutCookie }) => {
+  const { userName, userPhoto } = store
+
   return (
     <div className={style.block_user}>
       <button className={style.create} onClick={() => history.push('/new-article')}>
@@ -13,15 +15,15 @@ const HeaderLogIn = ({ store, history, logOut }) => {
       </button>
 
       <div className={style.profile} onClick={() => history.push('/profile')}>
-        <div className={style.author_user_name}>{store.userName}</div>
+        <div className={style.author_user_name}> {userName}</div>
 
-        <img className={style.author_image} alt="User" src={store.userPhoto} />
+        <img className={style.author_image} alt="User" src={userPhoto} />
       </div>
 
       <button
         className={style.log_out}
         onClick={() => {
-          logOut()
+          logOutCookie()
           history.push('/articles')
         }}
       >

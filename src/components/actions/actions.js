@@ -5,31 +5,45 @@ export const pushPosts = (posts) => ({ type: 'PUSH_POSTS', posts })
 export const loadEnd = () => ({ type: 'LOAD_END' })
 export const loadStart = () => ({ type: 'LOAD_START' })
 export const errorFetch = () => ({ type: 'ERROR_FETCH' })
-export const changePage = (page) => ({ type: 'CHANGE_PAGE', page })
+export const changePage = (page) => ({ type: 'CHANGE_PAGE', page, meta: { delayMs: 1000 } })
+export const haveCookie = (token) => ({ type: 'HAVE_TOKEN', token })
+export const offline = (bool) => ({ type: 'OFFLINE', bool })
+
+export const changeFavorire = (bool, id) => ({ type: 'CHANGE_FAVORITE', bool, id })
+
 export const isAvtorized = (dataUser) => ({
   type: 'AVTORIZED',
   email: dataUser.email,
   token: dataUser.token,
   username: dataUser.username,
+  meta: { delayMs: 1000 },
 })
-
-export const logOut = () => ({ type: 'LOGOUT' })
-
-export const login = (dataUser) => {
-  console.log(dataUser)
-  return {
-    type: 'LOGIN',
-    email: dataUser.user.email,
-    token: dataUser.user.token,
-    username: dataUser.user.username,
-    bio: dataUser.user.bio ? dataUser.user.bio : '',
-    image: dataUser.user.image ? dataUser.user.image : '',
-  }
+export const listenerOnline = () => {
+  return (dispatch) =>
+    window.addEventListener('offline', () => {
+      dispatch(offline(true))
+    })
 }
 
-export const addPost = (post) => {
-  // передать серверу post
-  // получить с сервера новые данные и отобразить getPosts
+export const listenerOffline = () => {
+  return (dispatch) =>
+    window.addEventListener('online', () => {
+      dispatch(offline(false))
+    })
+}
+
+export const logOut = () => ({ type: 'LOGOUT', meta: { delayMs: 1000 } })
+
+export const login = (dataUser) => {
+  return {
+    type: 'LOGIN',
+    email: dataUser.email,
+    token: dataUser.token,
+    username: dataUser.username,
+    bio: dataUser.bio ? dataUser.bio : '',
+    image: dataUser.image ? dataUser.image : '',
+    meta: { delayMs: 1000 },
+  }
 }
 
 const formatter = (array) => {
@@ -39,6 +53,7 @@ const formatter = (array) => {
       authorImage: item.author.image,
       authorFollowing: item.author.following,
       id: index,
+      slug: item.slug,
       title: item.title,
       postAbbreviated: item.description,
       postFull: item.body,
@@ -49,10 +64,6 @@ const formatter = (array) => {
       favoritesCount: item.favoritesCount,
     }
   })
-}
-export const createAccount = (dataUser) => {
-  // передать серверу dataUser данные нового пользователя
-  // получить с сервера новые данные и отобразить getPosts
 }
 
 export const newUser = (data, retries = 5) => {
@@ -70,27 +81,15 @@ export const newUser = (data, retries = 5) => {
         throw new Error()
       } else {
         const content = await response.json()
-        //         user
-        // :
-        // email
-        // :
-        // "sadadca11@mail.ru"
-        // token
-        // :
-        // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZDFlNDdjNzhkNDEwMWIwMDgyZTAyOCIsInVzZXJuYW1lIjoidXNlcm5hbWUxMjMxMSIsImV4cCI6MTc0Njk5Mjc2NCwiaWF0IjoxNzQxODA4NzY0fQ.9LOs6F3FDnV-f0Rb-eYsQ-r6MhtrQBnloE_QLQ3dhY4"
-        // username
-        // :
-        // "username12311"
-        console.log(content)
+
+        document.cookie = `token = ${content.token}; `
         dispatch(isAvtorized(content))
       }
     } catch (error) {
       if (retries <= 0) {
-        // dispatch(loadEnd())
-        console.log(error.message)
-        dispatch(errorFetch(error.message))
+        dispatch(errorFetch())
 
-        return
+        return { meta: { delayMs: 1000 } }
       }
       dispatch(newUser(data, retries - 1))
     }
@@ -98,53 +97,41 @@ export const newUser = (data, retries = 5) => {
 }
 export const saveUserData = (data, retries = 5) => {
   return async (dispatch) => {
-    console.log(data)
-    console.log(
-      JSON.stringify({
-        password: data.password,
-        email: data.emailAddress,
-        username: data.userName,
-        bio: data.bio || 'I work at State Farm.',
-        image: data.userPhoto || null,
-      })
-    )
     if (retries <= 0) {
-      // dispatch(loadEnd())
       dispatch(errorFetch())
-      return
+      return { meta: { delayMs: 1000 } }
     }
     try {
       const response = await fetch(`${baseurl}user`, {
         method: 'PUT',
         headers: {
-          Authorization: `${data.token}`,
+          Authorization: `Token ${data.token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: data.emailAddress,
-          username: data.userName,
-          bio: data.bio || 'I work at State Farm.',
-          image: data.userPhoto || null,
+          user: {
+            email: data.emailAddress,
+            username: data.userName,
+            bio: data.bio || 'I work at State Farm.',
+            image: data.userPhoto || null,
+            password: data.password,
+          },
         }),
       })
       if (!response.ok) {
         throw new Error()
       } else {
         const content = await response.json()
-        console.log(content)
-        // dispatch(login(content))
+
+        dispatch(login(content.user))
+        dispatch(getPosts())
       }
     } catch (error) {
       dispatch(saveUserData(data, retries - 1))
     }
   }
 }
-// передать серверу data измененные данные пользователя
-// получить с сервера новые данные и отобразить getPosts
 
-//
-//
-//
 export const oldUser = (data, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
@@ -165,20 +152,42 @@ export const oldUser = (data, retries = 5) => {
         throw new Error()
       } else {
         const content = await response.json()
-        console.log(content)
-        dispatch(login(content))
+
+        document.cookie = `token = ${content.user.token} SameSite=None; Secure;`
+        dispatch(login(content.user))
+        return { meta: { delayMs: 1000 } }
       }
     } catch (error) {
       dispatch(newUser(data, retries - 1))
     }
   }
 }
+export const logOutCookie = () => {
+  return async (dispatch) => {
+    document.cookie = 'token =  ; expires = Thu, 01 Jan 1970 00:00:00 GMT; path = /;'
+    dispatch(logOut())
+  }
+}
+// loadEnd loadStart
+// export const durationF = () => {
+//   return (dispatch) => {
+//     dispatch(loadStart())
 
+//     const timerId = setTimeout(() => {
+//       dispatch(loadEnd())
+//     }, 1000)
+//     return () => {
+//       clearTimeout(timerId)
+//     }
+//   }
+// }
 export const getPosts = (page, retries = 5) => {
   return async (dispatch) => {
+    dispatch(loadStart)
+
     if (retries <= 0) {
-      dispatch(loadEnd())
       dispatch(errorFetch())
+
       return
     }
 
@@ -191,7 +200,7 @@ export const getPosts = (page, retries = 5) => {
         const content = await searchContent.json()
         console.log(content.articles)
         const posts = formatter(content.articles)
-        console.log(posts)
+
         dispatch(pushPosts(posts))
       }
     } catch (error) {
@@ -200,10 +209,200 @@ export const getPosts = (page, retries = 5) => {
   }
 }
 
-// async (dispatch) => {
-//   if (retries <= 0) {
-//     dispatch(loadEnd())
-//     dispatch(errorFetch())
-//     return
-//   }
-// }
+export const dataPoToken = (token, retries = 5) => {
+  return async (dispatch) => {
+    if (retries <= 0) {
+      dispatch(loadEnd())
+      dispatch(errorFetch())
+
+      return
+    }
+
+    try {
+      const searchContent = await fetch(`${baseurl}user`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      })
+
+      if (!searchContent.ok) {
+        throw new Error()
+      } else {
+        const content = await searchContent.json()
+
+        dispatch(login(content.user))
+        dispatch(getPosts())
+      }
+    } catch (error) {
+      dispatch(getPosts(token, retries - 1)) //
+    }
+  }
+}
+export const getCookie = (name) => {
+  return async (dispatch) => {
+    const cookieName = name + '='
+    const decodedCookie = decodeURIComponent(document.cookie)
+    const cookieArray = decodedCookie.split(';')
+    for (let i = 0; i < cookieArray.length; i++) {
+      let cookie = cookieArray[i]
+      while (cookie.charAt(0) === ' ') {
+        cookie = cookie.substring(1)
+      }
+      if (cookie.indexOf(cookieName) === 0) {
+        const token = cookie.substring(cookieName.length, cookie.length)
+        dispatch(dataPoToken(token))
+        return { type: 'LOCATION_CHANGE' }
+      }
+    }
+  }
+}
+
+export const createPost = (data, retries = 5) => {
+  return async (dispatch) => {
+    if (retries <= 0) {
+      dispatch(errorFetch())
+      return
+    }
+    try {
+      const response = await fetch(`${baseurl}articles`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Token ${data.token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          article: {
+            title: data.title,
+            description: data.description,
+            body: data.text,
+            tagList: data.tagList,
+          },
+        }),
+      })
+      if (!response.ok) {
+        throw new Error()
+      } else {
+        dispatch(getPosts(1))
+        return { meta: { delayMs: 1000 } }
+      }
+    } catch (error) {
+      dispatch(createPost(data, retries - 1))
+    }
+  }
+}
+
+export const deletePost = (slug, token, retries = 5) => {
+  return async (dispatch) => {
+    if (retries <= 0) {
+      dispatch(errorFetch())
+      return
+    }
+    try {
+      const response = await fetch(`${baseurl}articles/${slug}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      })
+      if (!response.ok) {
+        throw new Error()
+      } else {
+        dispatch(getPosts(1))
+        return { meta: { delayMs: 5000 } }
+      }
+    } catch (error) {
+      dispatch(deletePost(slug, token, retries - 1))
+    }
+  }
+}
+
+export const updateArticle = (data, retries = 5) => {
+  return async (dispatch) => {
+    if (retries <= 0) {
+      dispatch(errorFetch())
+      return
+    }
+    try {
+      const response = await fetch(`${baseurl}articles/${data.slug} `, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Token ${data.token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          article: {
+            title: data.title,
+            description: data.description,
+            body: data.text,
+            tagList: data.tagList,
+          },
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error()
+      } else {
+        dispatch(getPosts(1))
+        return { meta: { delayMs: 5000 } }
+      }
+    } catch (error) {
+      dispatch(updateArticle(data, retries - 1))
+    }
+  }
+}
+
+export const favorite = (slug, token, id, retries = 5) => {
+  return async (dispatch) => {
+    if (retries <= 0) {
+      dispatch(errorFetch())
+      return
+    }
+    try {
+      const response = await fetch(`${baseurl}articles/${slug}/favorite`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error()
+      } else {
+        const content = await response.json()
+        console.log('POST')
+        dispatch(changeFavorire(content.article.favorited, id))
+        // dispatch(getPosts(1))
+      }
+    } catch (error) {
+      dispatch(favorite(slug, token, id, retries - 1))
+    }
+  }
+}
+export const noFavorite = (slug, token, id, retries = 5) => {
+  return async (dispatch) => {
+    if (retries <= 0) {
+      dispatch(errorFetch())
+      return
+    }
+    try {
+      const response = await fetch(`${baseurl}articles/${slug}/favorite`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error()
+      } else {
+        const content = await response.json()
+        console.log('DELETE')
+        dispatch(changeFavorire(content.article.favorited, id))
+        dispatch(getPosts(1))
+      }
+    } catch (error) {
+      dispatch(noFavorite(slug, token, id, retries - 1))
+    }
+  }
+}
