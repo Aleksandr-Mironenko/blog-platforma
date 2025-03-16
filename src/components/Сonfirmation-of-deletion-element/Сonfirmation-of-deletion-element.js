@@ -8,16 +8,21 @@ import allert from './allert.png'
 import style from './index.module.scss'
 
 const СonfirmationOfDeletionElement = ({ store, history, id, deletePost }) => {
+  const { posts, token, authorized } = store
   const deleted = () => {
-    const filteritem = store.posts.filter((item) => item.id === id)
-
-    deletePost(filteritem[0].slug, store.token)
-
+    const filteritem = posts.filter((item) => item.id === id)
+    deletePost(filteritem[0].slug, token)
     history.push('/articles')
   }
-  if (!store.authorized) {
+
+  const no = () => {
+    history.push(`/articles/${id}`)
+  }
+
+  if (!authorized) {
     return <Redirect to="/articles" />
   }
+
   return (
     <div className={style.confirmation_of_deletion_element}>
       <img src={arrow} alt="" className={style.image_arrow} />
@@ -28,12 +33,7 @@ const СonfirmationOfDeletionElement = ({ store, history, id, deletePost }) => {
           <div className={style.text}>Are you sure to delete this article?</div>
         </div>
         <div className={style.buttons}>
-          <button
-            className={style.button}
-            onClick={() => {
-              history.push(`/articles/${id}`)
-            }}
-          >
+          <button className={style.button} onClick={no}>
             No
           </button>
           <button className={style.button} onClick={deleted}>

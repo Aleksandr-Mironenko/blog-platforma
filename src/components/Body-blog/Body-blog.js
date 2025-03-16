@@ -8,7 +8,7 @@ import BlogElement from '../Blog-element'
 import style from './index.module.scss'
 
 const BodyBlog = ({ store, changePage }) => {
-  const { posts } = store
+  const { posts, pageQty, page } = store
 
   const elements = posts.map((item, index) => {
     return <BlogElement key={index} {...item} />
@@ -18,10 +18,10 @@ const BodyBlog = ({ store, changePage }) => {
     <div className={style.body_blog}>
       {elements}
       <Stack spacing={2} sx={{ margin: '26px auto 17px' }}>
-        {store.posts.length > 0 && (
+        {posts.length > 0 && (
           <Pagination
-            count={store.pageQty}
-            page={store.page}
+            count={pageQty}
+            page={page}
             shape="rounded"
             color="primary"
             onChange={(__, num) => changePage(num)}
@@ -33,5 +33,4 @@ const BodyBlog = ({ store, changePage }) => {
 }
 
 const mapStateToProps = (state) => ({ store: state })
-
 export default connect(mapStateToProps, actions)(BodyBlog)

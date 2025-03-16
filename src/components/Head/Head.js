@@ -7,15 +7,19 @@ import HeaderLogIn from '../Header-log-in'
 import HeaderLogOut from '../Header-log-out'
 
 import style from './index.module.scss'
+
 const Head = ({ store, history, getPosts }) => {
+  const { page, authorized } = store
+
   useEffect(() => {
     const fetchPosts = async () => {
-      await getPosts(store.page)
+      await getPosts(page)
     }
     fetchPosts()
-  }, [getPosts, store.page])
+  }, [getPosts, page])
 
-  const headerUser = store.authorized ? <HeaderLogIn /> : <HeaderLogOut />
+  const headerUser = authorized ? <HeaderLogIn /> : <HeaderLogOut />
+
   return (
     <header className={style.header}>
       <div
@@ -32,5 +36,4 @@ const Head = ({ store, history, getPosts }) => {
 }
 
 const mapStateToProps = (state) => ({ store: state })
-
 export default withRouter(connect(mapStateToProps, actions)(Head))

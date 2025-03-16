@@ -24,4 +24,5 @@ const HeaderLogOut = ({ history }) => {
     </div>
   )
 }
+
 export default withRouter(HeaderLogOut)

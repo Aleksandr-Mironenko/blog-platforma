@@ -6,7 +6,7 @@ import actions from '../actions'
 
 import style from './index.module.scss'
 
-const SignUp = ({ store, createAccount, history, newUser, getPosts }) => {
+const SignUp = ({ history, newUser, getPosts }) => {
   const [username, setUserName] = useState('')
   const [emailAddress, setEmailAddress] = useState('')
   const [password, setPassword] = useState('')
@@ -24,11 +24,11 @@ const SignUp = ({ store, createAccount, history, newUser, getPosts }) => {
     history.push('/articles')
   }
   const checkLength = password.length < 6 && password.length > 0
+
   const checkAll = checkLength || rpassword !== password
 
   return (
     <div className={style.signUp_body}>
-      {/* <div className={style.signUp}> */}
       <form className={style.signUp} onSubmit={clickCreate}>
         <div className={style.head}>Create new account</div>
         <label htmlFor="username" className={style.label}>
@@ -111,12 +111,9 @@ const SignUp = ({ store, createAccount, history, newUser, getPosts }) => {
           </Link>
         </div>
       </form>
-      {/* </div> */}
     </div>
   )
 }
 
 const mapStateToProps = (state) => ({ store: state })
-// export default connect(mapStateToProps, actions)(SignUp)
-
 export default withRouter(connect(mapStateToProps, actions)(SignUp))

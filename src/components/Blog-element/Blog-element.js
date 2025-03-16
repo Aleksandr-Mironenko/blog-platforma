@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 
 import actions from '../actions'
 
-// import image from './image.png'
 import style from './index.module.scss'
 import white from './transparent.svg'
 import red from './red.svg'
@@ -17,18 +16,15 @@ const BlogElement = ({
   authorUserName,
   createdAt,
   authorImage,
-  // authorFollowing,
   favorited,
   postAbbreviated,
-  postFull,
-  // updatedAt,
-
   id,
   slug,
   favorite,
   noFavorite,
 }) => {
-  // const isLike = favorited ? red : white
+  const { token } = store
+
   const abr = (text) => {
     if (text.length > 65) {
       return text.slice(0, 65) + '...'
@@ -49,9 +45,9 @@ const BlogElement = ({
 
   const liked = () => {
     if (!favorited) {
-      favorite(slug, store.token, id)
+      favorite(slug, token, id)
     } else {
-      noFavorite(slug, store.token, id)
+      noFavorite(slug, token, id)
     }
   }
 
@@ -68,20 +64,13 @@ const BlogElement = ({
             >
               {abr(`${title}`)}
             </div>
-
             <div className={style.favorites}>
-              {favorited ? (
-                <img alt="heart" src={red} className={style.heart} onClick={liked} />
-              ) : (
-                <img alt="heart" src={white} className={style.heart} onClick={liked} />
-              )}
+              <img alt="heart" src={favorited ? red : white} className={style.heart} onClick={liked} />
               <div className={style.favorites_count}>{favorited ? favoritesCount + 1 : favoritesCount}</div>
             </div>
           </div>
-
           <div className={style.tags}>{tagList.length ? tags : null}</div>
         </div>
-
         <div className={style.right}>
           <div className={style.author_info}>
             <div className={style.author_user_name}>{authorUserName}</div>

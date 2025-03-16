@@ -81,20 +81,19 @@ export const newUser = (data, retries = 5) => {
         throw new Error()
       } else {
         const content = await response.json()
-
         document.cookie = `token = ${content.token}; `
         dispatch(isAvtorized(content))
       }
     } catch (error) {
       if (retries <= 0) {
         dispatch(errorFetch())
-
         return { meta: { delayMs: 1000 } }
       }
       dispatch(newUser(data, retries - 1))
     }
   }
 }
+
 export const saveUserData = (data, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
@@ -118,6 +117,7 @@ export const saveUserData = (data, retries = 5) => {
           },
         }),
       })
+
       if (!response.ok) {
         throw new Error()
       } else {
@@ -135,7 +135,7 @@ export const saveUserData = (data, retries = 5) => {
 export const oldUser = (data, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
-      // dispatch(loadEnd())
+      dispatch(loadEnd())
       dispatch(errorFetch())
       return
     }
@@ -152,7 +152,6 @@ export const oldUser = (data, retries = 5) => {
         throw new Error()
       } else {
         const content = await response.json()
-
         document.cookie = `token = ${content.user.token} SameSite=None; Secure;`
         dispatch(login(content.user))
         return { meta: { delayMs: 1000 } }
@@ -162,30 +161,20 @@ export const oldUser = (data, retries = 5) => {
     }
   }
 }
+
 export const logOutCookie = () => {
   return async (dispatch) => {
     document.cookie = 'token =  ; expires = Thu, 01 Jan 1970 00:00:00 GMT; path = /;'
     dispatch(logOut())
   }
 }
-// loadEnd loadStart
-// export const durationF = () => {
-//   return (dispatch) => {
-//     dispatch(loadStart())
 
-//     const timerId = setTimeout(() => {
-//       dispatch(loadEnd())
-//     }, 1000)
-//     return () => {
-//       clearTimeout(timerId)
-//     }
-//   }
-// }
 export const getPosts = (page, retries = 5) => {
   return async (dispatch) => {
     dispatch(loadStart)
 
     if (retries <= 0) {
+      dispatch(loadEnd())
       dispatch(errorFetch())
 
       return
@@ -198,7 +187,6 @@ export const getPosts = (page, retries = 5) => {
         throw new Error()
       } else {
         const content = await searchContent.json()
-        console.log(content.articles)
         const posts = formatter(content.articles)
 
         dispatch(pushPosts(posts))
@@ -214,10 +202,8 @@ export const dataPoToken = (token, retries = 5) => {
     if (retries <= 0) {
       dispatch(loadEnd())
       dispatch(errorFetch())
-
       return
     }
-
     try {
       const searchContent = await fetch(`${baseurl}user`, {
         method: 'GET',
@@ -239,6 +225,7 @@ export const dataPoToken = (token, retries = 5) => {
     }
   }
 }
+
 export const getCookie = (name) => {
   return async (dispatch) => {
     const cookieName = name + '='
@@ -280,6 +267,7 @@ export const createPost = (data, retries = 5) => {
           },
         }),
       })
+
       if (!response.ok) {
         throw new Error()
       } else {
@@ -370,15 +358,14 @@ export const favorite = (slug, token, id, retries = 5) => {
         throw new Error()
       } else {
         const content = await response.json()
-        console.log('POST')
         dispatch(changeFavorire(content.article.favorited, id))
-        // dispatch(getPosts(1))
       }
     } catch (error) {
       dispatch(favorite(slug, token, id, retries - 1))
     }
   }
 }
+
 export const noFavorite = (slug, token, id, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
@@ -397,7 +384,6 @@ export const noFavorite = (slug, token, id, retries = 5) => {
         throw new Error()
       } else {
         const content = await response.json()
-        console.log('DELETE')
         dispatch(changeFavorire(content.article.favorited, id))
         dispatch(getPosts(1))
       }

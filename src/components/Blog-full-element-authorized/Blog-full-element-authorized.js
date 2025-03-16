@@ -16,17 +16,17 @@ const BlogFullElementAuthorized = ({
   authorUserName,
   createdAt,
   authorImage,
-  // authorFollowing,
   favorited,
   postAbbreviated = '',
   postFull = '',
-  updatedAt,
   history,
   id,
   slug,
   favorite,
   noFavorite,
 }) => {
+  const { userName, token } = store
+
   const isMarkdown = (text) => {
     const markdownPatterns = [
       /^#/,
@@ -38,9 +38,9 @@ const BlogFullElementAuthorized = ({
       /^(\*|-|\+|\d+\.) /,
       /!\[([^\]]+)]\(([^)]+)\)/,
     ]
-
     return markdownPatterns.some((pattern) => pattern.test(text))
   }
+
   const tags = tagList.map((item, index) => {
     if (item === ' ') {
       item = ''
@@ -53,7 +53,7 @@ const BlogFullElementAuthorized = ({
   })
 
   const fullOrNot =
-    authorUserName === store.userName ? (
+    authorUserName === userName ? (
       <div className={style.edit_delete}>
         <button
           className={style.delete}
@@ -73,11 +73,12 @@ const BlogFullElementAuthorized = ({
         </button>
       </div>
     ) : null
+
   const liked = () => {
     if (!favorited) {
-      favorite(slug, store.token, id)
+      favorite(slug, token, id)
     } else {
-      noFavorite(slug, store.token, id)
+      noFavorite(slug, token, id)
     }
   }
 
@@ -87,20 +88,13 @@ const BlogFullElementAuthorized = ({
         <div className={style.left}>
           <div className={style.title_sting}>
             <div className={style.title}>{title}</div>
-
             <div className={style.favorites}>
-              {favorited ? (
-                <img alt="heart" src={red} className={style.heart} onClick={liked} />
-              ) : (
-                <img alt="heart" src={white} className={style.heart} onClick={liked} />
-              )}
+              <img alt="heart" src={favorited ? red : white} className={style.heart} onClick={liked} />
               <div className={style.favorites_count}>{favorited ? favoritesCount + 1 : favoritesCount}</div>
             </div>
           </div>
-
           <div className={style.tags}>{tagList.length ? tags : null}</div>
         </div>
-
         <div className={style.right}>
           <div className={style.author_info}>
             <div className={style.author_user_name}>{authorUserName}</div>
@@ -114,7 +108,6 @@ const BlogFullElementAuthorized = ({
         <div className={style.post_abbreviated}>{postAbbreviated}</div>
         {fullOrNot}
       </div>
-
       <div className={style.postFull}>
         {isMarkdown(postFull) ? <ReactMarkdown>{postFull}</ReactMarkdown> : postFull}
       </div>

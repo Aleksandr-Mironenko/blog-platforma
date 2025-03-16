@@ -13,13 +13,10 @@ const HeaderLogIn = ({ store, history, logOutCookie }) => {
       <button className={style.create} onClick={() => history.push('/new-article')}>
         Create article
       </button>
-
       <div className={style.profile} onClick={() => history.push('/profile')}>
         <div className={style.author_user_name}> {userName}</div>
-
         <img className={style.author_image} alt="User" src={userPhoto} />
       </div>
-
       <button
         className={style.log_out}
         onClick={() => {
@@ -34,5 +31,4 @@ const HeaderLogIn = ({ store, history, logOutCookie }) => {
 }
 
 const mapStateToProps = (state) => ({ store: state })
-
 export default withRouter(connect(mapStateToProps, actions)(HeaderLogIn))

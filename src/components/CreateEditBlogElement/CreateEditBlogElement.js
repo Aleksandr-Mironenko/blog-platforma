@@ -18,6 +18,8 @@ const CreateEditBlogElement = ({
   updateArticle,
   createPost,
 }) => {
+  const { token, authorized } = store
+
   const [titlee, setTitle] = useState(title ? title : '')
   const [description, setDescription] = useState(postAbbreviated ? postAbbreviated : '')
   const [text, setText] = useState(postFull ? postFull : '')
@@ -43,25 +45,24 @@ const CreateEditBlogElement = ({
     e.preventDefault()
     const post = {
       title: titlee,
-
       tagList: tagsss,
-
       text: text,
       slug: slug,
       description: description,
-      token: store.token,
+      token: token,
     }
     if (check) {
       updateArticle(post)
     } else {
       createPost(post)
     }
-
     history.push('/articles')
   }
-  if (!store.authorized) {
+
+  if (!authorized) {
     return <Redirect to="/articles" />
   }
+
   return (
     <div className={style.createEditBlogElement}>
       <form onSubmit={send} className={style.blogElement}>
@@ -103,10 +104,8 @@ const CreateEditBlogElement = ({
           className={style.input}
           value={text}
         />
-
         <div className={style.tags}>
           <div className={style.label}>Tags</div>
-
           <div className={style.tags_elems_button}>
             <div className={style.tags_el}>{tagss}</div>
             <button
@@ -129,8 +128,4 @@ const CreateEditBlogElement = ({
 }
 
 const mapStateToProps = (state) => ({ store: state })
-
 export default withRouter(connect(mapStateToProps, actions)(CreateEditBlogElement))
-
-// возможнош разумно сделать разметку <fieldset>
-// <legend>User Details</legend>

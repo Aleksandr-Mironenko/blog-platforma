@@ -6,26 +6,30 @@ import actions from '../actions'
 
 import style from './index.module.scss'
 
-const ProfileUser = ({ store, saveUserData, history }) => {
-  const [userName, setUserName] = useState(store.userName)
+const ProfileUser = ({ store, saveUserData, history, password, authorized }) => {
+  const { userName, emailAddress, userPhoto, token } = store
 
-  const [emailAddress, setEmailAddress] = useState(store.emailAddress)
-  const [password, setPassword] = useState('')
-  const [userPhoto, setUserPhoto] = useState(store.userPhoto)
+  const [userNamee, setUserName] = useState(userName)
+  const [emailAddresss, setEmailAddress] = useState(emailAddress)
+  const [passwordd, setPassword] = useState('')
+  const [userPhotoo, setUserPhoto] = useState(userPhoto)
+
   const saving = (event) => {
     event.preventDefault()
     saveUserData({
       userName,
       emailAddress,
-      password: password || store.password,
+      password: password || password,
       userPhoto,
-      token: store.token,
+      token: token,
     })
     history.push('/articles')
   }
-  if (!store.authorized) {
+
+  if (!authorized) {
     return <Redirect to="/articles" />
   }
+
   return (
     <div className={style.edit_profile_body}>
       <form className={style.edit} onSubmit={saving}>
@@ -39,7 +43,7 @@ const ProfileUser = ({ store, saveUserData, history }) => {
           id="username"
           placeholder="Username"
           name="username"
-          value={userName}
+          value={userNamee}
           onChange={(e) => setUserName(e.target.value)}
           className={style.edit_input}
           autoComplete="uername"
@@ -53,7 +57,7 @@ const ProfileUser = ({ store, saveUserData, history }) => {
           id="emailAddress"
           placeholder="Email address"
           name="emailAddress"
-          value={emailAddress}
+          value={emailAddresss}
           onChange={(e) => setEmailAddress(e.target.value)}
           className={style.edit_input}
           autoComplete="email"
@@ -67,7 +71,7 @@ const ProfileUser = ({ store, saveUserData, history }) => {
           id="newPassword"
           placeholder="New password"
           name="newPassword"
-          value={password}
+          value={passwordd}
           onChange={(e) => setPassword(e.target.value)}
           className={style.edit_input}
           autoComplete="new password"
@@ -81,7 +85,7 @@ const ProfileUser = ({ store, saveUserData, history }) => {
           id="avatar"
           placeholder="Avatar image"
           name="avatar"
-          value={userPhoto}
+          value={userPhotoo}
           onChange={(e) => setUserPhoto(e.target.value)}
           className={style.edit_input}
           autoComplete="url"
@@ -94,5 +98,6 @@ const ProfileUser = ({ store, saveUserData, history }) => {
     </div>
   )
 }
+
 const mapStateToProps = (state) => ({ store: state })
 export default withRouter(connect(mapStateToProps, actions)(ProfileUser))

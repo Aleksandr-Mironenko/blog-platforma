@@ -5,7 +5,6 @@ const loadingMiddleware = (history) => (store) => {
   let timer = null
 
   const handleLocationChange = (location, action) => {
-    console.log('ВКЛЮЧИЛСЯ')
     store.dispatch(loadStart())
 
     if (timer) {
@@ -13,11 +12,9 @@ const loadingMiddleware = (history) => (store) => {
     }
 
     timer = setTimeout(() => {
-      console.log('ВЫКЛЮЧИЛСЯ')
       store.dispatch(loadEnd())
     }, 1000) // Задержка для имитации загрузки
     return () => {
-      console.log('МИДЛВАР НЕ РАБОТАЕТ')
       clearTimeout(timer)
     }
   }

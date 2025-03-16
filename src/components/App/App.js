@@ -6,12 +6,7 @@ import СonfirmationOfDeletionElement from '../Сonfirmation-of-deletion-element
 import BodyBlog from '../Body-blog'
 import actions from '../actions'
 import BlogFullElementAuthorized from '../Blog-full-element-authorized'
-//
-// import CreateBlogElement from '../Create-blog-element'
-// import EditBlogElement from '../Edit-blog-element'
-//
 import CreateEditBlogElement from '../CreateEditBlogElement'
-//
 import ProfileUser from '../Profile-user'
 import SignUp from '../Sign-up'
 import SignIn from '../Sign-in'
@@ -26,8 +21,7 @@ import style from './index.module.scss'
 
 const App = ({ store, getPosts, getCookie, listenerOnline, listenerOffline }) => {
   const { authorized, posts, page, loading, offline, error } = store
-  authorized ? console.log('Залогинен') : console.log('Не залогинен')
-  console.log(loading)
+
   useEffect(() => {
     getPosts(page)
   }, [getPosts, page])
@@ -48,6 +42,7 @@ const App = ({ store, getPosts, getCookie, listenerOnline, listenerOffline }) =>
       ) : (
         <div className={style.app}>
           <Head />
+
           {error ? (
             <Error />
           ) : loading ? (
@@ -69,6 +64,7 @@ const App = ({ store, getPosts, getCookie, listenerOnline, listenerOffline }) =>
                   return authorized ? <CreateEditBlogElement {...posts[id]} /> : <Redirect to="/articles" />
                 }}
               />
+
               <Route
                 path="/articles/:id/delete"
                 exact
@@ -92,8 +88,11 @@ const App = ({ store, getPosts, getCookie, listenerOnline, listenerOffline }) =>
                   return <BlogFullElementAuthorized {...posts[id]} />
                 }}
               />
+
               <Route path="/articles" exact component={BodyBlog} />
+
               <Route path="/" component={Transition} />
+
               <Redirect to="/articles" />
             </Switch>
           )}
@@ -102,6 +101,6 @@ const App = ({ store, getPosts, getCookie, listenerOnline, listenerOffline }) =>
     </Router>
   )
 }
-const mapStateToProps = (state) => ({ store: state })
 
+const mapStateToProps = (state) => ({ store: state })
 export default connect(mapStateToProps, actions)(App)

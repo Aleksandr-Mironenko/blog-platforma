@@ -12,6 +12,7 @@ const initialState = {
   pageQty: 5,
   posts: [],
 }
+
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case 'PUSH_POSTS': {

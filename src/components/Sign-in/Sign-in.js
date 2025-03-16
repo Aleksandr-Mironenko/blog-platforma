@@ -6,7 +6,7 @@ import actions from '../actions'
 
 import style from './index.module.scss'
 
-const SignIn = ({ inlogin, history, oldUser, getPosts }) => {
+const SignIn = ({ history, oldUser, getPosts }) => {
   const [emailAddress, setEmailAddress] = useState('')
   const [password, setPassword] = useState('')
 
@@ -18,8 +18,6 @@ const SignIn = ({ inlogin, history, oldUser, getPosts }) => {
     })
     getPosts()
     history.push('/articles')
-
-    // history.push('/')
   }
 
   return (
@@ -41,7 +39,6 @@ const SignIn = ({ inlogin, history, oldUser, getPosts }) => {
           onChange={(e) => setEmailAddress(e.target.value)}
           className={style.input}
         />
-
         <label htmlFor="password" className={style.label}>
           Password
         </label>
@@ -56,7 +53,6 @@ const SignIn = ({ inlogin, history, oldUser, getPosts }) => {
           onChange={(e) => setPassword(e.target.value)}
           className={style.input}
         />
-
         <button type="submit" className={style.button_login}>
           Login
         </button>
@@ -72,5 +68,4 @@ const SignIn = ({ inlogin, history, oldUser, getPosts }) => {
 }
 
 const mapStateToProps = (state) => ({ store: state })
-// export default connect(mapStateToProps, actions)(SignIn)
 export default withRouter(connect(mapStateToProps, actions)(SignIn))
