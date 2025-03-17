@@ -41,13 +41,12 @@ const App = ({ store, getPosts, getCookie, listenerOnline, listenerOffline, size
   }, [sizeMonitor])
   useEffect(() => {
     size()
-
     window.addEventListener('resize', size)
-
     return () => {
       window.removeEventListener('resize', size)
     }
   }, [size])
+
   return (
     <Router history={history}>
       {offline ? (

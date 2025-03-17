@@ -6,8 +6,8 @@ import actions from '../actions'
 
 import style from './index.module.scss'
 
-const ProfileUser = ({ store, saveUserData, history, password, authorized }) => {
-  const { userName, emailAddress, userPhoto, token } = store
+const ProfileUser = ({ store, saveUserData, history }) => {
+  const { userName, emailAddress, userPhoto, token, password, authorized } = store
 
   const [userNamee, setUserName] = useState(userName)
   const [emailAddresss, setEmailAddress] = useState(emailAddress)
@@ -19,13 +19,13 @@ const ProfileUser = ({ store, saveUserData, history, password, authorized }) => 
     saveUserData({
       userName,
       emailAddress,
-      password: password || password,
+      password: passwordd || password,
       userPhoto,
       token: token,
     })
     history.push('/articles')
   }
-
+  console.log(authorized)
   if (!authorized) {
     return <Redirect to="/articles" />
   }

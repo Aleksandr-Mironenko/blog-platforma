@@ -80,7 +80,7 @@ const reducer = (state = initialState, action) => {
         authorized: true,
       }
     }
-    case 'CHANGE_FAVORITE':
+    case 'CHANGE_FAVORITE': {
       return {
         ...state,
         posts: [
@@ -89,12 +89,15 @@ const reducer = (state = initialState, action) => {
           ...state.posts.slice(action.id + 1),
         ],
       }
+    }
 
-    case 'SIZE_MONITOR': //если нужно будет добавить мобильные экраны
+    case 'SIZE_MONITOR': {
       return {
         ...state,
         sizeMonitor: action.size,
       }
+    } //если нужно будет добавить мобильные экраны
+
     default:
       return { ...state }
   }

@@ -32,7 +32,7 @@ export const listenerOffline = () => {
     })
 }
 
-export const logOut = () => ({ type: 'LOGOUT' })
+export const logOut = () => ({ type: 'LOGOUT' }) //meta: { delayMs: 1000 }
 
 export const login = (dataUser) => {
   return {
@@ -42,7 +42,6 @@ export const login = (dataUser) => {
     username: dataUser.username,
     bio: dataUser.bio ? dataUser.bio : '',
     image: dataUser.image ? dataUser.image : '',
-    meta: { delayMs: 1000 },
   }
 }
 
@@ -86,9 +85,8 @@ export const newUser = (data, retries = 5) => {
       }
     } catch (error) {
       if (retries <= 0) {
-        dispatch(loadEnd())
         dispatch(errorFetch())
-        return
+        return { meta: { delayMs: 1000 } }
       }
       dispatch(newUser(data, retries - 1))
     }
@@ -98,9 +96,7 @@ export const newUser = (data, retries = 5) => {
 export const saveUserData = (data, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
-      dispatch(loadEnd())
       dispatch(errorFetch())
-      return
     }
     try {
       const response = await fetch(`${baseurl}user`, {
@@ -124,6 +120,7 @@ export const saveUserData = (data, retries = 5) => {
         throw new Error()
       } else {
         const content = await response.json()
+
         dispatch(login(content.user))
         dispatch(getPosts())
       }
@@ -176,8 +173,10 @@ export const getPosts = (page, retries = 5) => {
     if (retries <= 0) {
       dispatch(loadEnd())
       dispatch(errorFetch())
+
       return
     }
+
     try {
       const searchContent = await fetch(`${baseurl}/articles?limit=5&offset=${(page - 1) * 5}`)
 
@@ -186,6 +185,7 @@ export const getPosts = (page, retries = 5) => {
       } else {
         const content = await searchContent.json()
         const posts = formatter(content.articles)
+
         dispatch(pushPosts(posts))
       }
     } catch (error) {
@@ -213,6 +213,7 @@ export const dataPoToken = (token, retries = 5) => {
         throw new Error()
       } else {
         const content = await searchContent.json()
+
         dispatch(login(content.user))
         dispatch(getPosts())
       }
@@ -244,7 +245,6 @@ export const getCookie = (name) => {
 export const createPost = (data, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
-      dispatch(loadEnd())
       dispatch(errorFetch())
       return
     }
@@ -279,7 +279,6 @@ export const createPost = (data, retries = 5) => {
 export const deletePost = (slug, token, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
-      dispatch(loadEnd())
       dispatch(errorFetch())
       return
     }
@@ -294,6 +293,7 @@ export const deletePost = (slug, token, retries = 5) => {
         throw new Error()
       } else {
         dispatch(getPosts(1))
+        return { meta: { delayMs: 5000 } }
       }
     } catch (error) {
       dispatch(deletePost(slug, token, retries - 1))
@@ -304,7 +304,6 @@ export const deletePost = (slug, token, retries = 5) => {
 export const updateArticle = (data, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
-      dispatch(loadEnd())
       dispatch(errorFetch())
       return
     }
@@ -339,7 +338,6 @@ export const updateArticle = (data, retries = 5) => {
 export const favorite = (slug, token, id, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
-      dispatch(loadEnd())
       dispatch(errorFetch())
       return
     }
@@ -366,7 +364,6 @@ export const favorite = (slug, token, id, retries = 5) => {
 export const noFavorite = (slug, token, id, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
-      dispatch(loadEnd())
       dispatch(errorFetch())
       return
     }
