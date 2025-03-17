@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import { connect } from 'react-redux'
 import { Router, Route, Switch, Redirect } from 'react-router-dom'
 
@@ -19,7 +19,7 @@ import Offline from '../Offline'
 
 import style from './index.module.scss'
 
-const App = ({ store, getPosts, getCookie, listenerOnline, listenerOffline }) => {
+const App = ({ store, getPosts, getCookie, listenerOnline, listenerOffline, sizeMonitor }) => {
   const { authorized, posts, page, loading, offline, error } = store
 
   useEffect(() => {
@@ -35,6 +35,19 @@ const App = ({ store, getPosts, getCookie, listenerOnline, listenerOffline }) =>
     listenerOffline()
   }, [listenerOnline, listenerOffline])
 
+  //если нужно будет добавить мобильные экраны
+  const size = useCallback(() => {
+    sizeMonitor(window.innerWidth)
+  }, [sizeMonitor])
+  useEffect(() => {
+    size()
+
+    window.addEventListener('resize', size)
+
+    return () => {
+      window.removeEventListener('resize', size)
+    }
+  }, [size])
   return (
     <Router history={history}>
       {offline ? (

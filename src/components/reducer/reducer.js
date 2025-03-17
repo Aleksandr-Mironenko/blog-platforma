@@ -11,6 +11,7 @@ const initialState = {
   page: 1,
   pageQty: 5,
   posts: [],
+  sizeMonitor: window.innerWidth,
 }
 
 const reducer = (state = initialState, action) => {
@@ -79,7 +80,7 @@ const reducer = (state = initialState, action) => {
         authorized: true,
       }
     }
-    case 'CHANGE_FAVORITE': {
+    case 'CHANGE_FAVORITE':
       return {
         ...state,
         posts: [
@@ -88,7 +89,12 @@ const reducer = (state = initialState, action) => {
           ...state.posts.slice(action.id + 1),
         ],
       }
-    }
+
+    case 'SIZE_MONITOR': //если нужно будет добавить мобильные экраны
+      return {
+        ...state,
+        sizeMonitor: action.size,
+      }
     default:
       return { ...state }
   }

@@ -1,6 +1,6 @@
 import { format, parseISO } from 'date-fns'
 const baseurl = 'https://blog-platform.kata.academy/api/'
-
+export const sizeMonitor = (size = window.innerWidth) => ({ type: 'SIZE_MONITOR', size })
 export const pushPosts = (posts) => ({ type: 'PUSH_POSTS', posts })
 export const loadEnd = () => ({ type: 'LOAD_END' })
 export const loadStart = () => ({ type: 'LOAD_START' })
