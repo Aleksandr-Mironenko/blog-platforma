@@ -74,3 +74,24 @@ width: 319px;
 height: 40px;
  
 }
+
+.button_send:disabled{
+  background-color: rgb(81, 171, 255);
+  color:rgb(220, 220, 220);
+  border-color: rgb(117, 188, 255);
+}
+ 
+.input_false{
+height: 40px;
+border: 1px solid rgb(245, 34, 45);;
+border-radius: 4px;
+padding: 0 12px;
+font-size: 16px;
+line-height: 24px;
+}
+
+
+.input_false:focus{
+  outline: none;
+  border-color: solid rgb(245, 34, 45); 
+ }

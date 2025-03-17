@@ -111,7 +111,7 @@ export const saveUserData = (data, retries = 5) => {
         },
         body: JSON.stringify({
           user: {
-            email: data.emailAddress,
+            email: data.email,
             username: data.userName,
             bio: data.bio || 'I work at State Farm.',
             image: data.userPhoto || null,
@@ -146,7 +146,7 @@ export const oldUser = (data, retries = 5) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ user: { email: data.emailAddress, password: data.password } }),
+        body: JSON.stringify({ user: { email: data.email, password: data.password } }),
       })
 
       if (!response.ok) {

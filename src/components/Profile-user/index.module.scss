@@ -1,7 +1,6 @@
  
  .edit_profile_body{
-  width: 384px;
-  height:498px ;
+  width: 384px; 
   margin:59px auto auto;
   background-color: white;
   box-shadow: 0px 0.61px 2.93px 0px rgba(0, 0, 0, 0.02),0px 1.46px 7.05px 0px rgba(0, 0, 0, 0.03),0px 2.75px 13.27px 0px rgba(0, 0, 0, 0.04),0px 4.91px 23.68px 0px rgba(0, 0, 0, 0.04),0px 9.19px 44.28px 0px rgba(0, 0, 0, 0.05),0px 22px 106px 0px rgba(0, 0, 0, 0.07);
@@ -49,4 +48,25 @@ line-height: 24px;
   color: white;
   background-color: rgb(24, 144, 255);
   margin-top: 21px;
+ }
+
+ .button_save:disabled{
+  background-color: rgb(81, 171, 255);
+  color:rgb(220, 220, 220);
+  border-color: rgb(117, 188, 255);
+}
+ 
+.input_false{
+height: 40px;
+border: 1px solid rgb(245, 34, 45);;
+border-radius: 4px;
+padding: 0 12px;
+font-size: 16px;
+line-height: 24px;
+}
+
+
+.input_false:focus{
+  outline: none;
+  border-color: solid rgb(245, 34, 45);;
  }

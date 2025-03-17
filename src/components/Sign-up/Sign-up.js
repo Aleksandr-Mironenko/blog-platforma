@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React from 'react' //, { useState }
+import { useForm } from 'react-hook-form'
 import { connect } from 'react-redux'
 import { Link, withRouter } from 'react-router-dom'
 
@@ -7,101 +8,117 @@ import actions from '../actions'
 import style from './index.module.scss'
 
 const SignUp = ({ history, newUser, getPosts }) => {
-  const [username, setUserName] = useState('')
-  const [emailAddress, setEmailAddress] = useState('')
-  const [password, setPassword] = useState('')
-  const [rpassword, setRpassword] = useState('')
-  const [agree, setAgree] = useState(true)
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isValid },
+  } = useForm({
+    mode: 'onChange',
+    defaultValues: { agree: true },
+  })
 
-  const clickCreate = (event) => {
-    event.preventDefault()
+  const agree = watch('agree')
+  const password = watch('password')
+  // const repeatPassword = watch('repeatPassword')
+
+  const clickCreate = (data) => {
     newUser({
-      username: username,
-      email: emailAddress,
-      password: password,
+      username: data.username,
+      email: data.email,
+      password: data.password,
     })
     getPosts()
     history.push('/articles')
   }
-  const checkLength = password.length < 6 && password.length > 0
-
-  const checkAll = checkLength || rpassword !== password
 
   return (
     <div className={style.signUp_body}>
-      <form className={style.signUp} onSubmit={clickCreate}>
+      <form className={style.signUp} onSubmit={handleSubmit(clickCreate)}>
         <div className={style.head}>Create new account</div>
         <label htmlFor="username" className={style.label}>
           Username
         </label>
         <input
-          required
+          {...register('username', {
+            required: 'Username cannot be empty',
+            minLength: { value: 3, message: 'Usermane must be at least 3 characters' },
+            maxLength: { value: 20, message: 'Usermane no more than 20 characters' },
+          })}
           type="text"
           id="username"
           placeholder="Username"
           name="username"
-          value={username}
-          onChange={(e) => setUserName(e.target.value)}
-          className={style.input}
+          className={errors.username ? style.input_false : style.input}
           autoComplete="Username"
         />
-        <label htmlFor="emailAddress" className={style.label}>
+        {errors.username && <span>{errors.username.message}</span>}
+
+        <label htmlFor="email" className={style.label}>
           Email address
         </label>
         <input
+          {...register('email', {
+            required: 'Email cannot be empty',
+            pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' },
+          })}
           autoComplete="email"
-          required
           type="email"
-          id="emailAddress"
+          id="email"
           placeholder="Email address"
-          name="emailAddress"
-          value={emailAddress}
-          onChange={(e) => setEmailAddress(e.target.value)}
-          className={style.input}
+          name="email"
+          className={errors.email ? style.input_false : style.input}
         />
+        {errors.email && <span>{errors.email.message}</span>}
+
         <label htmlFor="password" className={style.label}>
           Password
         </label>
         <input
-          required
+          {...register('password', {
+            required: 'Password is required',
+            minLength: { value: 6, message: 'Password must be at least 6 characters' },
+            maxLength: { value: 40, message: 'Password no more than 40 characters' },
+          })}
           autoComplete="current-password"
           type="password"
           id="password"
           placeholder="Password"
           name="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className={checkLength ? style.input_false : style.input}
+          className={errors.password ? style.input_false : style.input}
         />
-        {checkLength && 'Your password needs to be at least 6 characters'}
+        {errors.password && <span>{errors.password.message}</span>}
+
         <label htmlFor="repeatPassword" className={style.label}>
           Repeat Password
         </label>
         <input
-          required
+          {...register('repeatPassword', {
+            required: 'Password is required',
+            validate: (value) => value === password || 'Passwords must match',
+          })}
           autoComplete="current-password"
-          type="repeatPassword"
+          type="password"
           id="repeatPassword"
           placeholder="Repeat Password"
           name="repeatPassword"
-          value={rpassword}
-          onChange={(e) => setRpassword(e.target.value)}
-          className={checkAll ? style.input_false : style.input}
+          className={errors.repeatPassword ? style.input_false : style.input}
         />
-        {checkAll && 'Passwords must match'}
+        {errors.repeatPassword && <span>{errors.repeatPassword.message}</span>}
+
         <div className={style.agree_block}>
           <input
+            {...register('agree')}
             name="agree"
             type="checkbox"
             checked={agree}
-            onChange={() => setAgree(() => !agree)}
-            onClick={() => setAgree(() => !agree)}
+            onChange={() => setValue('agree', !agree)}
             className={style.input_agree}
           />
-
           <div className={style.agreeText}>I agree to the processing of my personal information</div>
         </div>
-        <button disabled={checkAll || checkLength || !agree} type="submit" className={style.buttton_create}>
+        <button disabled={!isValid || !agree} type="submit" className={style.buttton_create}>
           Create
         </button>
         <div className={style.account}>

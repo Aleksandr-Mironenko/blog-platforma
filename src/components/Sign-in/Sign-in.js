@@ -1,20 +1,27 @@
-import React, { useState } from 'react'
+import React from 'react' //, { useState }
 import { connect } from 'react-redux'
 import { withRouter, Link } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
 
 import actions from '../actions'
 
 import style from './index.module.scss'
 
 const SignIn = ({ history, oldUser, getPosts }) => {
-  const [emailAddress, setEmailAddress] = useState('')
-  const [password, setPassword] = useState('')
+  //
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm({ mode: 'onChange' })
 
-  const login = (event) => {
-    event.preventDefault()
+  // const [emailAddress, setEmailAddress] = useState('')
+  // const [password, setPassword] = useState('')
+
+  const login = (data) => {
     oldUser({
-      emailAddress,
-      password,
+      email: data.email,
+      password: data.password,
     })
     getPosts()
     history.push('/articles')
@@ -22,38 +29,39 @@ const SignIn = ({ history, oldUser, getPosts }) => {
 
   return (
     <div className={style.signIn_body}>
-      <form className={style.signIn} onSubmit={login}>
+      <form className={style.signIn} onSubmit={handleSubmit(login)}>
         <div className={style.head}>Sign In</div>
 
-        <label htmlFor="emailAddress" className={style.label}>
+        <label htmlFor="email" className={style.label}>
           Email address
         </label>
         <input
+          {...register('email', {
+            required: 'Email cannot be empty',
+            pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' },
+          })}
           autoComplete="email"
-          required
-          type="text"
-          id="emailAddress"
+          type="email"
+          id="email"
           placeholder="Email address"
-          name="emailAddress"
-          value={emailAddress}
-          onChange={(e) => setEmailAddress(e.target.value)}
-          className={style.input}
+          name="email"
+          className={errors.email ? style.input_false : style.input}
         />
+        {errors.email && <span>{errors.email.message}</span>}
         <label htmlFor="password" className={style.label}>
           Password
         </label>
         <input
-          required
+          {...register('password', { required: 'Username is required' })}
           autoComplete="current-password"
           type="password"
           id="password"
           placeholder="Password"
           name="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className={style.input}
+          className={errors.password ? style.input_false : style.input}
         />
-        <button type="submit" className={style.button_login}>
+        {errors.password && <span>{errors.password.message}</span>}
+        <button type="submit" disabled={!isValid} className={style.button_login}>
           Login
         </button>
         <div className={style.not_account}>

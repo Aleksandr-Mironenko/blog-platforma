@@ -1,4 +1,5 @@
-import { useState } from 'react'
+// import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { connect } from 'react-redux'
 import { withRouter, Redirect } from 'react-router-dom'
 
@@ -20,37 +21,59 @@ const CreateEditBlogElement = ({
 }) => {
   const { token, authorized } = store
 
-  const [titlee, setTitle] = useState(title ? title : '')
-  const [description, setDescription] = useState(postAbbreviated ? postAbbreviated : '')
-  const [text, setText] = useState(postFull ? postFull : '')
-  const [tags, setTags] = useState(tagList ? tagList : [''])
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isValid },
+  } = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      title: title ? title : '',
+      description: postAbbreviated ? postAbbreviated : '',
+      text: postFull ? postFull : '',
+      tagList: tagList ? tagList : [''],
+    },
+  })
 
-  const sostTags = (index, value) => {
-    setTags([...tags.slice(0, index), value, ...tags.slice(index + 1)])
+  // const [titlee, setTitle] = useState(title ? title : '')
+  // const [description, setDescription] = useState(postAbbreviated ? postAbbreviated : '')
+  // const [text, setText] = useState(postFull ? postFull : '')
+  // const [tags, setTags] = useState(tagList ? tagList : [''])
+  const tagsList = watch('tagList')
+
+  const addTags = (index, value) => {
+    const newTags = [...tagsList.slice(0, index), value, ...tagsList.slice(index + 1)]
+    setValue('tagList', newTags)
   }
 
   const delTags = (index) => {
-    setTags([...tags.slice(0, index), ...tags.slice(index + 1)])
+    const newTags = [...tagsList.slice(0, index), ...tagsList.slice(index + 1)]
+    setValue('tagList', newTags)
   }
 
-  const tagss = tags.map((item, index) => {
-    return <AddTag key={index} item={item} index={index} sostTags={sostTags} delTags={delTags} />
+  const tagsElements = tagsList.map((item, index) => {
+    return <AddTag key={index} item={item} index={index} addTags={addTags} delTags={delTags} />
   })
 
-  const tagsss = tags.filter((item) => item !== '' && item !== ' ')
+  const tags = tagsList.filter((item) => item !== '' && item !== ' ')
 
+  //
+  //
+  //
+  //
   const check = title || postAbbreviated || postFull || tagList
-
-  const send = (e) => {
-    e.preventDefault()
+  const send = (data) => {
     const post = {
-      title: titlee,
-      tagList: tagsss,
-      text: text,
+      title: data.title,
+      tagList: tags,
+      text: data.text,
       slug: slug,
-      description: description,
+      description: data.description,
       token: token,
     }
+
     if (check) {
       updateArticle(post)
     } else {
@@ -65,53 +88,66 @@ const CreateEditBlogElement = ({
 
   return (
     <div className={style.createEditBlogElement}>
-      <form onSubmit={send} className={style.blogElement}>
+      <form onSubmit={handleSubmit(send)} className={style.blogElement}>
         <div className={style.legend}>{check ? 'Edit article' : 'Create new article'}</div>
         <label htmlFor="title" className={style.label}>
           Title
         </label>
         <input
+          {...register('title', { required: 'Title cannot be empty' })}
           type="text"
           id="title"
           name="title"
-          value={titlee}
-          onChange={(e) => setTitle(e.target.value)}
+          // value={titlee}
+          // onChange={(e) => setTitle(e.target.value)}
           placeholder="Title"
-          className={style.input}
+          className={errors.title ? style.input_false : style.input}
+          autoComplete="title"
         />
-        <label htmlFor="shortDescription" className={style.label}>
+        {errors.title && <span>{errors.title.message}</span>}
+
+        <label htmlFor="description" className={style.label}>
           Short description
         </label>
         <input
+          {...register('description', { required: 'Description cannot be empty' })}
           type="text"
-          id="shortDescription"
-          name="shortDescription"
-          value={description}
+          id="description"
+          name="description"
+          // value={description}
           placeholder="Title"
-          onChange={(e) => setDescription(e.target.value)}
-          className={style.input}
+          // onChange={(e) => setDescription(e.target.value)}
+          className={errors.description ? style.input_false : style.input}
+          autoComplete="description"
         />
+        {errors.description && <span>{errors.description.message}</span>}
+
         <label htmlFor="text" className={style.label}>
           Text
         </label>
         <textarea
+          {...register('text', { required: 'Text cannot be empty' })}
           id="text"
           name="text"
           rows="4"
           cols="500"
-          onChange={(e) => setText(e.target.value)}
+          // onChange={(e) => setText(e.target.value)}
           placeholder="Text"
-          className={style.input}
-          value={text}
+          className={errors.text ? style.input_false : style.input}
+          // value={text}
+          autoComplete="text"
         />
+        {errors.text && <span>{errors.text.message}</span>}
+
         <div className={style.tags}>
           <div className={style.label}>Tags</div>
           <div className={style.tags_elems_button}>
-            <div className={style.tags_el}>{tagss}</div>
+            <div className={style.tags_el}>{tagsElements}</div>
             <button
               type="button"
               onClick={() => {
-                setTags([...tags, ''])
+                const newTags = [...tagsList, '']
+                setValue('tagList', newTags)
               }}
               className={style.button_add}
             >
@@ -119,7 +155,7 @@ const CreateEditBlogElement = ({
             </button>
           </div>
         </div>
-        <button type="submit" className={style.button_send}>
+        <button disabled={!isValid} type="submit" className={style.button_send}>
           Send
         </button>
       </form>

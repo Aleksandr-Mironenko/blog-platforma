@@ -1,6 +1,6 @@
 import style from './index.module.scss'
 
-const AddTag = ({ item, index, sostTags, delTags }) => {
+const AddTag = ({ item, index, addTags, delTags }) => {
   return (
     <div className={style.tag}>
       <input
@@ -9,7 +9,7 @@ const AddTag = ({ item, index, sostTags, delTags }) => {
         name={item + index}
         value={item}
         placeholder="Tag"
-        onChange={(e) => sostTags(index, e.target.value)}
+        onChange={(e) => addTags(index, e.target.value)}
         className={style.input_tag}
       />
       <button type="button" className={style.button_del} onClick={() => delTags(index)}>
