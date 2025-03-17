@@ -1,6 +1,7 @@
 const initialState = {
   authorized: false,
   error: false,
+  loginError: false,
   loading: false,
   offline: false,
   userName: '',
@@ -20,7 +21,7 @@ const reducer = (state = initialState, action) => {
       return { ...state, posts: [...action.posts] }
     }
     case 'ERROR_FETCH': {
-      return { ...state, error: true }
+      return { ...state, error: action.bool }
     }
     case 'LOAD_START': {
       return { ...state, loading: true }
@@ -97,7 +98,12 @@ const reducer = (state = initialState, action) => {
         sizeMonitor: action.size,
       }
     } //если нужно будет добавить мобильные экраны
-
+    case 'LOGIN_ERROR': {
+      return {
+        ...state,
+        loginError: action.bool,
+      }
+    }
     default:
       return { ...state }
   }

@@ -4,7 +4,7 @@ export const sizeMonitor = (size = window.innerWidth) => ({ type: 'SIZE_MONITOR'
 export const pushPosts = (posts) => ({ type: 'PUSH_POSTS', posts })
 export const loadEnd = () => ({ type: 'LOAD_END' })
 export const loadStart = () => ({ type: 'LOAD_START' })
-export const errorFetch = () => ({ type: 'ERROR_FETCH' })
+export const errorFetch = (bool) => ({ type: 'ERROR_FETCH', bool })
 export const changePage = (page) => ({ type: 'CHANGE_PAGE', page, meta: { delayMs: 1000 } }) //можно было добавить всем meta
 export const haveCookie = (token) => ({ type: 'HAVE_TOKEN', token })
 export const offline = (bool) => ({ type: 'OFFLINE', bool })
@@ -87,7 +87,7 @@ export const newUser = (data, retries = 5) => {
     } catch (error) {
       if (retries <= 0) {
         dispatch(loadEnd())
-        dispatch(errorFetch())
+        dispatch(errorFetch(true))
         return
       }
       dispatch(newUser(data, retries - 1))
@@ -99,7 +99,7 @@ export const saveUserData = (data, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
       dispatch(loadEnd())
-      dispatch(errorFetch())
+      dispatch(errorFetch(true))
       return
     }
     try {
@@ -137,7 +137,7 @@ export const oldUser = (data, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
       dispatch(loadEnd())
-      dispatch(errorFetch())
+      dispatch(errorFetch(true))
       return
     }
     try {
@@ -157,7 +157,7 @@ export const oldUser = (data, retries = 5) => {
         dispatch(login(content.user))
       }
     } catch (error) {
-      dispatch(newUser(data, retries - 1))
+      dispatch(oldUser(data, retries - 1))
     }
   }
 }
@@ -175,7 +175,7 @@ export const getPosts = (page, retries = 5) => {
 
     if (retries <= 0) {
       dispatch(loadEnd())
-      dispatch(errorFetch())
+      dispatch(errorFetch(true))
       return
     }
     try {
@@ -198,7 +198,7 @@ export const dataPoToken = (token, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
       dispatch(loadEnd())
-      dispatch(errorFetch())
+      dispatch(errorFetch(true))
       return
     }
     try {
@@ -245,7 +245,7 @@ export const createPost = (data, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
       dispatch(loadEnd())
-      dispatch(errorFetch())
+      dispatch(errorFetch(true))
       return
     }
     try {
@@ -280,7 +280,7 @@ export const deletePost = (slug, token, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
       dispatch(loadEnd())
-      dispatch(errorFetch())
+      dispatch(errorFetch(true))
       return
     }
     try {
@@ -305,7 +305,7 @@ export const updateArticle = (data, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
       dispatch(loadEnd())
-      dispatch(errorFetch())
+      dispatch(errorFetch(true))
       return
     }
     try {
@@ -340,7 +340,7 @@ export const favorite = (slug, token, id, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
       dispatch(loadEnd())
-      dispatch(errorFetch())
+      dispatch(errorFetch(true))
       return
     }
     try {
@@ -367,9 +367,10 @@ export const noFavorite = (slug, token, id, retries = 5) => {
   return async (dispatch) => {
     if (retries <= 0) {
       dispatch(loadEnd())
-      dispatch(errorFetch())
+      dispatch(errorFetch(true))
       return
     }
+
     try {
       const response = await fetch(`${baseurl}articles/${slug}/favorite`, {
         method: 'DELETE',
