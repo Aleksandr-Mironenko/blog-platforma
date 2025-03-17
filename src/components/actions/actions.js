@@ -152,7 +152,7 @@ export const oldUser = (data, retries = 5) => {
         throw new Error()
       } else {
         const content = await response.json()
-        document.cookie = `token = ${content.user.token} SameSite=None; Secure;`
+        document.cookie = `token = ${content.user.token}; SameSite=None; Secure;`
         dispatch(login(content.user))
         return { meta: { delayMs: 1000 } }
       }
